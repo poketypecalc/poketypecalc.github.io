@@ -1,0 +1,647 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+}
+
+.type-container {
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    margin-bottom: 2rem;
+}
+
+#selected-types {
+    margin-bottom: 15px;
+}
+
+#type-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.type-btn {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.type-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Base style for type buttons - no borders or effects */
+.type-btn {
+    border: none;
+}
+
+/* Style for selected type buttons in the selection area only */
+#type-buttons .type-btn.selected {
+    transform: scale(0.95);
+    outline: 3px solid #333;  /* Original outline style */
+}
+
+/* Dark mode specific style for selected buttons */
+[data-theme="dark"] #type-buttons .type-btn.selected {
+    outline: 3px solid #f0ecec;  /* Pure red */
+}
+
+.results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.weakness, .resistance, .immune {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+h2 {
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.type-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    width: 160px;  /* Increased from 140px to 160px */
+    box-sizing: border-box;
+}
+
+.type-chip .type-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.type-chip span {
+    flex: 1;
+    text-align: left;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* Dark mode specific border */
+[data-theme="dark"] .type-chip {
+    border: 2px solid rgba(255, 255, 255, 0.15);  /* Much lighter border */
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1),   /* Inner glow */
+                0 0 8px rgba(255, 255, 255, 0.1);      /* Outer glow */
+}
+
+[data-theme="dark"] .type-chip:hover {
+    border-color: rgba(255, 255, 255, 0.25);  /* Even lighter on hover */
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15),  /* Stronger inner glow */
+                0 0 12px rgba(255, 255, 255, 0.15);    /* Stronger outer glow */
+}
+
+.none-text {
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.type-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* Dark mode switch styles */
+.theme-switch-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.theme-switch {
+    display: inline-block;
+    height: 34px;
+    position: relative;
+    width: 60px;
+}
+
+.theme-switch input {
+    display: none;
+}
+
+.slider {
+    background-color: #e0e0e0;
+    bottom: 0;
+    cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: .4s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.slider svg {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: .4s;
+    stroke-width: 2.5px;
+}
+
+.slider .sun {
+    left: 6px;
+    stroke: #ff9800;
+    fill: #ff9800;
+    opacity: 1;
+}
+
+.slider .moon {
+    right: 6px;
+    stroke: #2196f3;
+    fill: #2196f3;
+    opacity: 0;
+}
+
+input:checked + .slider {
+    background-color: #37474f;
+}
+
+input:checked + .slider .sun {
+    opacity: 0;
+}
+
+input:checked + .slider .moon {
+    opacity: 1;
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+/* Hover effect just on the toggle itself */
+.slider:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+/* Dark mode colors */
+:root {
+    --bg-color: #f5f5f5;
+    --text-color: #333;
+    --card-bg: white;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --card-bg: #2d2d2d;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+#selected-types p {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    text-align: left;
+    padding: 8px 0;
+    margin-left: 8px;
+    font-weight: 400;
+    opacity: 0.75;
+}
+
+[data-theme="dark"] #selected-types p {
+    color: #7986cb;
+}
+
+/* Add this at the top of your CSS file to import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap'); 
+
+.search-container {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.type-search {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--shadow-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    transition: all 0.2s ease;
+}
+
+.type-search:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
+}
+
+.pokemon-search {
+    flex: 3;  /* Makes the pokemon search wider */
+}
+
+.type-search:not(.pokemon-search) {
+    flex: 2;
+}
+
+/* Dark mode specific styles */
+[data-theme="dark"] .type-search {
+    border-color: #444;
+    background-color: #2d2d2d;
+}
+
+[data-theme="dark"] .type-search:focus {
+    border-color: #4a90e2;
+    background-color: #363636;
+}
+
+/* Placeholder text styles */
+.type-search::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+.pokemon-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--card-bg);
+    border: 1px solid var(--shadow-color);
+    border-radius: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+    box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+.pokemon-suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;  /* Slightly more vertical padding */
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pokemon-suggestion-item:hover {
+    background-color: var(--shadow-color);
+}
+
+.pokemon-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pokemon-name {
+    font-weight: 500;
+}
+
+.pokemon-types {
+    display: flex;
+    gap: 4px;
+}
+
+.pokemon-type-pill {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    color: white;
+}
+
+.history-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+}
+
+.history-container h3 {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 1rem;
+}
+
+#type-history {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.history-item {
+    padding: 6px 12px;
+    background-color: var(--card-bg);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: transform 0.2s;
+    border: 1px solid var(--shadow-color);
+}
+
+.history-item:hover {
+    transform: translateY(-1px);
+}
+
+.history-type {
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* Keep the Pokemon history items different */
+.pokemon-history-container .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border: none;
+    transform: none;
+}
+
+.pokemon-history-container .history-item:hover {
+    transform: none;
+    background-color: var(--shadow-color);
+}
+
+.pokemon-history-container {
+    margin-top: 1rem;  /* Smaller margin since it follows the type history */
+}
+
+.pokemon-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+}
+
+.pokemon-history-item:hover {
+    transform: translateY(-1px);
+    background-color: var(--shadow-color);
+}
+
+.pokemon-history-item .pokemon-types {
+    display: flex;
+    gap: 4px;
+}
+
+.pokemon-history-item .pokemon-type-pill {
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.8rem;
+}
+
+/* Add some spacing between the two history containers */
+.history-container + .history-container {
+    margin-top: 1.5rem;
+}
+
+/* Close button within each chip */
+.type-chip .close {
+    margin-left: 8px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.type-chip .close:hover {
+    opacity: 1;
+}
+
+/* Reset any border/glow effects on type chips */
+.weakness .type-chip,
+.resistance .type-chip,
+.immune .type-chip {
+    border: none;
+    box-shadow: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0.5rem 1rem;
+    margin: 0.25rem;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+}
+
+/* Explicitly disable hover effects */
+.weakness .type-chip:hover,
+.resistance .type-chip:hover,
+.immune .type-chip:hover {
+    transform: none;
+    box-shadow: none;
+    border: none;
+}
+
+/* Styles for multiplier groups */
+.multiplier-group {
+    margin-bottom: 8px;
+}
+
+.multiplier-group:last-child {
+    margin-bottom: 0;
+}
+
+.multiplier-label {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Adjust spacing for type chips within groups */
+.multiplier-group .type-chip {
+    margin: 2px;
+}
+
+/* Alternating row colors for Pokemon history */
+.pokemon-history-container .history-item:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.03);  /* Very light gray for light theme */
+}
+
+.pokemon-history-container .history-item:nth-child(even) {
+    background-color: var(--shadow-color);
+}
+
+/* Hover effect for both odd and even rows */
+.pokemon-history-container .history-item:hover {
+    background-color: var(--hover-color, rgba(0, 0, 0, 0.15));
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .pokemon-history-container .history-item:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.02);  /* Very slight white for dark theme */
+}
+
+[data-theme="dark"] .pokemon-history-container .history-item:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .pokemon-history-container .history-item:hover {
+    background-color: var(--hover-color, rgba(255, 255, 255, 0.1));
+}
+
+/* History header and clear button styling */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.clear-history-btn {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    background-color: var(--bg-color);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--text-color);
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.clear-history-btn:hover {
+    opacity: 1;
+    background-color: #ff5252;
+    color: white;
+    border-color: #ff5252;
+}
+
+[data-theme="dark"] .clear-history-btn {
+    border-color: #444;
+}
+
+/* Adjust container to handle the fixed-width chips */
+#weaknesses, #resistances, #immunities {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Multiplier colors */
+.multiplier {
+    margin-left: auto;  /* Push multiplier to the right */
+    font-weight: bold;
+}
+
+.multiplier.super-weak {
+    color: #2ecc71;  /* Bright green */
+}
+
+.multiplier.weak {
+    color: #27ae60;  /* Darker green */
+}
+
+.multiplier.resist {
+    color: #e74c3c;  /* Bright red */
+}
+
+.multiplier.super-resist {
+    color: #c0392b;  /* Darker red */
+}
+
+.multiplier.immune {
+    color: #95a5a6;  /* Gray for immune */
+}
+
+/* Adjust type chip to accommodate colored multiplier */
+.type-chip span:not(.multiplier) {
+    margin-right: 4px;
+}
+
+.multiplier-header {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+}
+
+.multiplier-header.super-weak {
+    color: #229753;  /* Keep 4x bright green */
+}
+
+.multiplier-header.weak {
+    color: #8ddba6;  /* Lighter green for 2x */
+}
+
+.multiplier-header.resist {
+    color: #cc918c;  /* Lighter red for 1/2x */
+}
+
+.multiplier-header.super-resist {
+    color: #e95d4d;  /* Keep 1/4x bright red */
+}
+
+.multiplier-header.immune {
+    color: #95a5a6;  /* Keep immune gray */
+}
+
+/* Keep type chip multipliers white */
+.type-chip .multiplier {
+    color: white;
+    margin-left: auto;
+}
+
+.multiplier-group {
+    margin-bottom: 12px;
+}
+
+.type-chips-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.pokemon-sprite {
+    width: 48px;
+    height: 48px;
+    image-rendering: auto;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 4px;
+    padding: 4px;
+}
