@@ -147,8 +147,8 @@ h2 {
 /* Dark mode switch styles */
 .theme-switch-wrapper {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    top: 1rem;
+    right: 1rem;
     z-index: 100;
 }
 
@@ -644,4 +644,33 @@ input:checked + .slider .moon {
     background-color: rgba(0, 0, 0, 0.03);
     border-radius: 4px;
     padding: 4px;
+}
+
+@media screen and (max-width: 768px) {
+    .theme-switch-wrapper {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    .container {
+        padding-top: 3.5rem;  /* Add space for the toggle */
+    }
+
+    h1 {
+        font-size: 1.5rem;  /* Slightly smaller title on mobile */
+        margin-top: 0.5rem;
+    }
+}
+
+/* For very small screens */
+@media screen and (max-width: 360px) {
+    .theme-switch-wrapper {
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+
+    .container {
+        padding-top: 3rem;
+    }
 }
