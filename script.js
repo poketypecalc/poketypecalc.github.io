@@ -215,7 +215,7 @@ function displayResults(weaknesses, resistances, immunities) {
             groups[key].push(item);
         });
 
-        // Define multiplier order (moved 0.25 to be with 4)
+        // Define multiplier order (including 0)
         const multiplierOrder = [4, 0.25, 2, 0.5, 0];
 
         // Create sections for each multiplier group in order
@@ -236,17 +236,15 @@ function displayResults(weaknesses, resistances, immunities) {
                         <span class="multiplier-header ${multiplierClass}">
                             ${formatMultiplierHeader(multiplier)}
                         </span>
-                        <div class="type-chips-group">
-                            ${items.map(({ type }) => `
-                                <span class="type-chip" style="background-color: ${typeColors[type]}">
-                                    <img src="images/${type.toLowerCase()}_icon.png" 
-                                         alt="${type} type" 
-                                         class="type-icon">
-                                    <span>${type}</span>
-                                    <span class="multiplier">(${formatMultiplier(multiplier)})</span>
-                                </span>
-                            `).join('')}
-                        </div>
+                        ${items.map(({ type }) => `
+                            <span class="type-chip" style="background-color: ${typeColors[type]}">
+                                <img src="images/${type.toLowerCase()}_icon.png" 
+                                     alt="${type} type" 
+                                     class="type-icon">
+                                <span>${type}</span>
+                                <span class="multiplier">${formatMultiplier(multiplier)}</span>
+                            </span>
+                        `).join('')}
                     </div>
                 `);
             }
@@ -259,20 +257,20 @@ function displayResults(weaknesses, resistances, immunities) {
 
     function formatMultiplierHeader(multiplier) {
         const mult = parseFloat(multiplier);
-        if (mult === 4) return '4x';
-        if (mult === 2) return '2x';
-        if (mult === 0.5) return '1/2x';
-        if (mult === 0.25) return '1/4x';
-        if (mult === 0) return '0x';
+        if (mult === 4) return '4×';
+        if (mult === 2) return '2×';
+        if (mult === 0.5) return '½×';
+        if (mult === 0.25) return '¼×';
+        if (mult === 0) return '0×';
         return '';
     }
 
     function formatMultiplier(multiplier) {
-        if (multiplier === 4) return '4x';
-        if (multiplier === 2) return '2x';
-        if (multiplier === 0.5) return '1/2x';
-        if (multiplier === 0.25) return '1/4x';
-        if (multiplier === 0) return '0x';
+        if (multiplier === 4) return '(4×)';
+        if (multiplier === 2) return '(2×)';
+        if (multiplier === 0.5) return '(½×)';
+        if (multiplier === 0.25) return '(¼×)';
+        if (multiplier === 0) return '(0×)';
         return '';
     }
 
@@ -315,14 +313,28 @@ function initializeSearch() {
 
 function initializeHistory() {
     let history = JSON.parse(localStorage.getItem('typeHistory') || '[]');
-    
+
     function saveToHistory() {
-        if (selectedTypes.length > 0 && !isSelectingTypes()) {
-            const combo = selectedTypes.sort().join(' / ');
-            history = [combo, ...history.filter(h => h !== combo)].slice(0, 5);
-            localStorage.setItem('typeHistory', JSON.stringify(history));
-            updateHistoryDisplay();
+        if (selectedTypes.length !== 2) return;  // Only save when we have exactly 2 types
+
+        const combination = selectedTypes.join(' / ');
+        
+        // Remove the combination if it already exists
+        const index = history.indexOf(combination);
+        if (index > -1) {
+            history.splice(index, 1);
         }
+        
+        // Add to the beginning of the array
+        history.unshift(combination);
+        
+        // Keep only the last 10 combinations
+        if (history.length > 10) {
+            history.pop();
+        }
+        
+        localStorage.setItem('typeHistory', JSON.stringify(history));
+        updateHistoryDisplay();
     }
 
     function clearHistory() {
@@ -362,6 +374,7 @@ function initializeHistory() {
 
     document.getElementById('clear-history').addEventListener('click', clearHistory);
 
+    // Make sure we're calling saveToHistory after calculating effectiveness
     const originalCalculateEffectiveness = calculateEffectiveness;
     calculateEffectiveness = function() {
         originalCalculateEffectiveness.apply(this, arguments);
