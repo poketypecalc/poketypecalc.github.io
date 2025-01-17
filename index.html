@@ -6,6 +6,7 @@
     <title>Pokémon Type Calculator</title>
     <link rel="icon" type="image/x-icon" href="/images/ptcicon.png">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="theme-switch-wrapper">
@@ -78,6 +79,47 @@
                 <button id="clear-pokemon-history" class="clear-history-btn">Clear History</button>
             </div>
             <div id="pokemon-history"></div>
+        </div>
+        <div class="stats-container" style="display: none;">
+            <div class="base-stats">
+                <div class="stats-header">
+                    <h3>Base Stats - <span id="stats-pokemon-name"></span></h3>
+                    <img id="stats-pokemon-sprite" class="stats-sprite" alt="">
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <span class="stat-label" data-stat="hp">HP</span>
+                        <div id="hp-stat"></div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" data-stat="attack">Attack</span>
+                        <div id="attack-stat"></div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" data-stat="defense">Defense</span>
+                        <div id="defense-stat"></div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" data-stat="sp-attack">Sp. Attack</span>
+                        <div id="sp-attack-stat"></div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" data-stat="sp-defense">Sp. Defense</span>
+                        <div id="sp-defense-stat"></div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label" data-stat="speed">Speed</span>
+                        <div id="speed-stat"></div>
+                    </div>
+                    <div class="stat-item total">
+                        <span class="stat-label">Total</span>
+                        <div id="bst-stat"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stat-chart">
+                <canvas id="statsChart"></canvas>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

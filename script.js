@@ -5,18 +5,29 @@ async function loadPokemonData() {
         const response = await fetch('seaglass_all_pokemon.csv');
         const csvText = await response.text();
         
-        // Parse CSV
-        pokemonData = csvText.split('\n')
-            .filter(line => line.trim())
-            .map(line => {
-                const [name, typeString] = line.split(',');
-                return {
-                    name: name.trim(),
-                    types: typeString.trim().split('/')
-                };
-            });
+        // Split into lines and remove empty lines
+        const lines = csvText.split('\n').filter(line => line.trim());
+        
+        // Skip the header row (first line)
+        pokemonData = lines.slice(1).map(line => {
+            const [POKEMON, TYPE, HP, ATK, DEF, SPA, SPD, SPE, BST, ABILITIES, hiddenAbility] = line.split(',');
+            return {
+                POKEMON: POKEMON.trim(),
+                types: TYPE.trim().split('/'),
+                HP: parseInt(HP),
+                ATK: parseInt(ATK),
+                DEF: parseInt(DEF),
+                SPA: parseInt(SPA),
+                SPD: parseInt(SPD),
+                SPE: parseInt(SPE),
+                BST: parseInt(BST),
+                ABILITIES: ABILITIES,
+                hiddenAbility: hiddenAbility
+            };
+        });
             
         console.log('Loaded Pokemon:', pokemonData.length);  // Debug info
+        console.log('Sample Pokemon:', pokemonData[0]);  // Should now show Treecko
     } catch (error) {
         console.error('Error loading Pokemon data:', error);
     }
@@ -410,18 +421,18 @@ function initializePokemonSearch() {
         }
 
         const matches = pokemonData
-            .filter(pokemon => pokemon.name.toLowerCase().includes(searchTerm))
-            .slice(0, 8);
+            .filter(pokemon => pokemon.POKEMON.toLowerCase().includes(searchTerm))
+            .slice(0, 80);
 
         if (matches.length > 0) {
             suggestionsContainer.style.display = 'block';
             suggestionsContainer.innerHTML = matches.map(pokemon => `
-                <div class="pokemon-suggestion-item" onclick="selectPokemon('${pokemon.name}')">
-                    <img src="images/sprites/front/${pokemonNumbers[pokemon.name]}.png" 
-                         alt="${pokemon.name}"
+                <div class="pokemon-suggestion-item" onclick="selectPokemon('${pokemon.POKEMON}')">
+                    <img src="images/sprites/front/${pokemonNumbers[pokemon.POKEMON]}.png"
+                         alt="${pokemon.POKEMON}"
                          class="pokemon-sprite">
                     <div class="pokemon-info">
-                        <span class="pokemon-name">${pokemon.name}</span>
+                        <span class="pokemon-name">${pokemon.POKEMON}</span>
                         <div class="pokemon-types">
                             ${pokemon.types.map(type => `
                                 <span class="pokemon-type-pill" 
@@ -448,7 +459,7 @@ function initializePokemonSearch() {
 
 // Add this function to global scope
 window.selectPokemon = function(pokemonName) {
-    const pokemon = pokemonData.find(p => p.name === pokemonName);
+    const pokemon = pokemonData.find(p => p.POKEMON === pokemonName);
     if (pokemon) {
         // Clear current selection
         selectedTypes = [];
@@ -457,8 +468,14 @@ window.selectPokemon = function(pokemonName) {
         // Select the pokemon's types
         pokemon.types.forEach(type => toggleType(type.trim()));
         
+        // Display stats
+        displayPokemonStats(pokemon);
+        
         // Add to Pokemon history
-        addToPokemonHistory(pokemon);
+        addToPokemonHistory({
+            POKEMON: pokemon.POKEMON,
+            types: pokemon.types
+        });
         
         // Clear search input and hide suggestions
         document.getElementById('pokemonSearch').value = '';
@@ -474,7 +491,7 @@ function addToPokemonHistory(pokemon) {
     let history = JSON.parse(localStorage.getItem('pokemonHistory') || '[]');
     
     // Remove if already exists (to move to top)
-    history = history.filter(p => p.name !== pokemon.name);
+    history = history.filter(p => p.POKEMON !== pokemon.POKEMON);  // Changed from name to POKEMON
     
     // Add to start of array
     history.unshift(pokemon);
@@ -491,30 +508,35 @@ function addToPokemonHistory(pokemon) {
 
 function updatePokemonHistoryDisplay() {
     const historyContainer = document.getElementById('pokemon-history');
-    const clearButton = document.getElementById('clear-pokemon-history');
     const history = JSON.parse(localStorage.getItem('pokemonHistory') || '[]');
-    
+
     if (history.length === 0) {
-        historyContainer.innerHTML = '<span class="none-text">No recent Pokémon</span>';
-        clearButton.style.display = 'none';  // Hide clear button when no history
+        historyContainer.innerHTML = '<span class="none-text">No Pokémon history yet</span>';
+        document.getElementById('clear-pokemon-history').style.display = 'none';
         return;
     }
-    
-    clearButton.style.display = 'block';  // Show clear button when there's history
-    
-    historyContainer.innerHTML = history.map(pokemon => `
-        <div class="history-item" onclick="selectPokemon('${pokemon.name}')">
-            <span>${pokemon.name}</span>
-            <div class="pokemon-types">
-                ${pokemon.types.map(type => `
-                    <span class="pokemon-type-pill" 
-                          style="background-color: ${typeColors[type.trim()]}">
-                        ${type.trim()}
-                    </span>
-                `).join('')}
+
+    document.getElementById('clear-pokemon-history').style.display = 'block';
+    historyContainer.innerHTML = history.map(pokemon => {
+        const spriteNumber = pokemonNumbers[pokemon.POKEMON] || '0';
+        return `
+            <div class="history-item" onclick="loadPokemonFromHistory('${pokemon.POKEMON}')">
+                <div class="pokemon-info-container">
+                    <img src="images/sprites/front/${spriteNumber}.png" 
+                         alt="${pokemon.POKEMON}"
+                         class="pokemon-sprite">
+                    <span class="pokemon-name">${pokemon.POKEMON}</span>
+                </div>
+                <div class="pokemon-types">
+                    ${pokemon.types.map(type => `
+                        <span class="pokemon-type-pill" style="background-color: ${typeColors[type]}">
+                            ${type}
+                        </span>
+                    `).join('')}
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function initializePokemonHistory() {
@@ -919,6 +941,11 @@ const pokemonNumbers = {
     'Chingling': '433',
     'Bonsly': '438',
     'Mime Jr.': '439',
+    'Happiny': '440',
+    'Munchlax': '446',
+    'Weavile': '461',
+    'Magnezone': '462',
+    'Lickilicky': '463',
     'Rhyperior': '464',
     'Tangrowth': '465',
     'Electivire': '466',
@@ -945,8 +972,125 @@ const pokemonNumbers = {
     'Tinkatuff': '958',
     'Tinkaton': '959',
     'Annihilape': '979',
-    'Clodsire': '981',
-    'Farigiraf': '982',
-    'Walking Wake': '1011',
-    'Iron Crown': '1019'
+    'Farigiraf': '981',
+    'Dudunsparce': '982',
+    'Dipplin': '1011',
+    'Hydrapple': '1019'
 }; 
+
+function loadPokemonFromHistory(pokemonName) {
+    // Clear current selections
+    selectedTypes.length = 0;
+    
+    // Find the pokemon in data (not history) to get all stats
+    const pokemon = pokemonData.find(p => p.POKEMON === pokemonName);
+    
+    if (pokemon) {
+        // Add each type to selectedTypes
+        pokemon.types.forEach(type => {
+            if (!selectedTypes.includes(type)) {
+                selectedTypes.push(type);
+            }
+        });
+        
+        // Display stats
+        displayPokemonStats(pokemon);
+        
+        // Update the UI
+        updateUI();
+    }
+} 
+
+function updateSelectedTypes() {
+    const selectedTypesContainer = document.getElementById('selected-types');
+    
+    if (selectedTypes.length === 0) {
+        selectedTypesContainer.innerHTML = '<p>No types selected</p>';
+        return;
+    }
+
+    selectedTypesContainer.innerHTML = selectedTypes.map(type => `
+        <span class="type-chip" style="background-color: ${typeColors[type]}">
+            <img src="images/${type.toLowerCase()}_icon.png" 
+                 alt="${type} type" 
+                 class="type-icon">
+            <span>${type}</span>
+            <span class="close" onclick="removeType('${type}')">&times;</span>
+        </span>
+    `).join('');
+
+    // Update the visual selection in the type buttons
+    document.querySelectorAll('#type-buttons .type-btn').forEach(button => {
+        const type = button.textContent.trim();
+        if (selectedTypes.includes(type)) {
+            button.classList.add('selected');
+        } else {
+            button.classList.remove('selected');
+        }
+    });
+} 
+
+const statMaxValues = {
+    HP: 190,    // Wobbuffet
+    ATK: 160,   // Slaking
+    DEF: 230,   // Shuckle
+    SPA: 125,   // Gardevoir
+    SPD: 230,   // Shuckle
+    SPE: 160,   // Ninjask
+    BST: 680    // Lugia/Ho-oh
+};
+
+function getStatColor(percentage) {
+    if (percentage <= 25) {
+        return '#ff4d4d';  // Red (0-25%)
+    } else if (percentage <= 50) {
+        return '#ff9933';  // Orange (26-50%)
+    } else if (percentage <= 75) {
+        return '#ffd700';  // Yellow (51-75%)
+    } else {
+        return '#4caf50';  // Green (76-100%)
+    }
+}
+
+function updateStatBar(elementId, value, statType) {
+    const element = document.getElementById(elementId);
+    const maxValue = statMaxValues[statType];
+    const percentage = (value / maxValue) * 100;
+    const color = getStatColor(percentage);
+    
+    element.innerHTML = `
+        <div class="stat-container">
+            <div class="stat-bar-bg">
+                <div class="stat-bar-fill" 
+                     style="width: ${percentage}%; background-color: ${color} !important;">
+                </div>
+            </div>
+            <span class="stat-value">${value}</span>
+        </div>
+    `;
+}
+
+function displayPokemonStats(pokemon) {
+    // Show stats container
+    document.querySelector('.stats-container').style.display = 'grid';
+    
+    // Set Pokemon name
+    document.getElementById('stats-pokemon-name').textContent = pokemon.POKEMON;
+    
+    // Set Pokemon sprite
+    const spriteNumber = pokemonNumbers[pokemon.POKEMON] || '0';
+    const spriteElement = document.getElementById('stats-pokemon-sprite');
+    spriteElement.src = `images/sprites/front/${spriteNumber}.png`;
+    spriteElement.alt = pokemon.POKEMON;
+    
+    // Update each stat with value and progress bar
+    updateStatBar('hp-stat', pokemon.HP, 'HP');
+    updateStatBar('attack-stat', pokemon.ATK, 'ATK');
+    updateStatBar('defense-stat', pokemon.DEF, 'DEF');
+    updateStatBar('sp-attack-stat', pokemon.SPA, 'SPA');
+    updateStatBar('sp-defense-stat', pokemon.SPD, 'SPD');
+    updateStatBar('speed-stat', pokemon.SPE, 'SPE');
+    
+    // Add BST bar
+    updateStatBar('bst-stat', pokemon.BST, 'BST');
+} 
