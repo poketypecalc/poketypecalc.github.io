@@ -83,8 +83,14 @@
         <div class="stats-container" style="display: none;">
             <div class="base-stats">
                 <div class="stats-header">
-                    <h3>Base Stats - <span id="stats-pokemon-name"></span></h3>
-                    <img id="stats-pokemon-sprite" class="stats-sprite" alt="">
+                    <h3>Base Stats</h3>
+                    <div class="pokemon-info">
+                        <img id="stats-pokemon-sprite" class="stats-sprite" alt="">
+                        <div class="name-and-types">
+                            <h4 id="stats-pokemon-name"></h4>
+                            <div id="stats-pokemon-types" class="pokemon-types"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="stat-grid">
                     <div class="stat-item">
@@ -112,7 +118,7 @@
                         <div id="speed-stat"></div>
                     </div>
                     <div class="stat-item total">
-                        <span class="stat-label">Total</span>
+                        <span class="stat-label" data-stat="total"><b>Total</b></span>
                         <div id="bst-stat"></div>
                     </div>
                 </div>

@@ -345,7 +345,31 @@ input:checked+.slider .moon {
 .pokemon-info {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
+    width: fit-content;  /* Only take up needed width */
+}
+
+.name-and-types {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;  /* Take full width */
+}
+
+#stats-pokemon-name {
+    text-align: center;  /* Center the name */
+}
+
+.stats-header .pokemon-types {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    align-self: flex-start;  /* Align to the left */
+}
+
+/* Remove left padding since we're centering */
+.stats-header {
+    padding-left: 0;
 }
 
 .pokemon-name {
@@ -775,53 +799,23 @@ input:checked+.slider .moon {
     width: 100%;
 }
 
+/* Regular stat items */
 .stat-item {
     display: flex !important;
     align-items: center !important;
-    padding: 8px 16px !important;
-    width: 100% !important;
+    padding: 8px 16px !important;  /* Back to original padding */
+    width: fit-content !important;
     background-color: rgba(0, 0, 0, 0.03) !important;
     border-radius: 4px !important;
 }
 
-.stat-item:not(.total) {
-    max-width: 500px !important;  /* Back to a more moderate width */
-}
-
-.stat-label {
-    color: var(--text-color);
-    font-weight: 500;
-    min-width: 120px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.stat-value {
-    min-width: 30px !important;
-    text-align: right !important;
-    margin-left: 4px !important;
-    z-index: 2 !important;
-    position: relative !important;
-    font-weight: bold !important;
-    padding-right: 8px !important;
-}
-
-.stat-chart {
-    width: 100%;
-    height: 300px;
-}
-
-[data-theme="dark"] .stat-item {
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-/* Total stat */
+/* Total stat styles */
 .stat-item.total {
+    width: 100% !important;
     max-width: none !important;
+    padding: 16px 16px 8px !important;  /* More padding on top */
+    margin-top: 8px !important;         /* Space above */
+    border-top: 2px solid rgba(0, 0, 0, 0.1) !important;  /* Divider line */
 }
 
 .stat-item.total .stat-container {
@@ -829,25 +823,24 @@ input:checked+.slider .moon {
     align-items: center !important;
     gap: 4px !important;
     flex: 1 !important;
-    margin-left: 20px !important;
-}
-
-.stat-item.total .stat-bar-bg {
-    flex: 1 !important;
-    margin-right: 4px !important;
-    min-width: unset !important;  /* Remove min-width constraint */
-    width: auto !important;       /* Let flex handle the width */
+    margin-left: 12px !important;  /* Match regular stat margin */
+    width: auto !important;
 }
 
 .stat-item.total .stat-label {
-    width: 50px !important;
+    min-width: 110px !important;
     flex-shrink: 0 !important;
+    font-size: 1.1rem !important;     /* Slightly larger */
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
 }
 
 .stat-item.total .stat-value {
-    width: 40px !important;
-    flex-shrink: 0 !important;
+    min-width: 35px !important;
     text-align: right !important;
+    padding-left: 8px !important;
+    font-size: 1.1rem !important;     /* Slightly larger */
+    font-weight: 700 !important;      /* Bolder */
 }
 
 /* Remove any inherited constraints */
@@ -856,46 +849,38 @@ input:checked+.slider .moon {
     width: 100% !important;
 }
 
-/* Dark theme support */
-[data-theme="dark"] .stat-item.total {
-    background-color: rgba(255, 255, 255, 0.08);
-}
-
 .stat-container {
     display: flex !important;
     align-items: center !important;
     gap: 4px !important;
-    flex: 1 !important;
-    margin-left: 20px !important;
+    margin-left: 12px !important;  /* Reduced from 20px */
+    width: fit-content !important;
 }
 
 .stat-bar-bg {
     flex: 1 !important;
-    height: 12px !important;
+    height: 14px !important;  /* Slightly taller than regular 12px bars */
     background-color: #ddd !important;
     border-radius: 6px !important;
     overflow: hidden !important;
     margin-right: 4px !important;
     position: relative !important;
     min-width: 200px !important;  /* More moderate minimum width */
+    max-width: 350px !important;
 }
 
 .stat-bar-fill {
     height: 100% !important;
     border-radius: 6px !important;
-    transition: width 0.3s ease !important;
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     z-index: 1 !important;
+    animation: statBarFill 0.6s ease forwards;
 }
 
 [data-theme="dark"] .stat-bar-bg {
     background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-[data-theme="dark"] .stat-item {
-    background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Grid layout */
@@ -908,23 +893,54 @@ input:checked+.slider .moon {
 
 .stats-header {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
 }
 
-.stats-header h3 {
+.pokemon-info {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0;
+    flex-direction: column;
+    gap: 8px;
+    width: fit-content;  /* Only take up needed width */
 }
 
-.stats-sprite {
-    width: 48px;
-    height: 48px;
-    image-rendering: auto;
-    vertical-align: middle;
+/* Center sprite and name */
+.stats-sprite,
+#stats-pokemon-name {
+    align-self: center;  /* Center these within their container */
+    text-align: center;
+}
+
+/* Keep types left-aligned */
+.stats-header .pokemon-types {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    align-self: flex-start;  /* Align to the left */
+}
+
+.stats-title {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stats-title h3 {
+    margin: 0;
+    font-size: 1.4rem;  /* Slightly larger for main title */
+}
+
+.stats-title h4 {
+    margin: 0;
+    font-size: 1.1rem;  /* Smaller than h3 but larger than types */
+    color: var(--text-color);
+}
+
+.stats-header .pokemon-types {
+    display: flex;
+    gap: 6px;
+    align-items: center;
 }
 
 .stat-label::before {
@@ -963,5 +979,132 @@ input:checked+.slider .moon {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300bcd4'%3E%3Cpath d='M4,10A1,1 0 0,1 3,9A1,1 0 0,1 4,8H12A2,2 0 0,0 14,6A2,2 0 0,0 12,4C11.45,4 10.95,4.22 10.59,4.59C10.2,5 9.56,5 9.17,4.59C8.78,4.2 8.78,3.56 9.17,3.17C9.9,2.45 10.9,2 12,2A4,4 0 0,1 16,6A4,4 0 0,1 12,10H4M19,12A1,1 0 0,0 20,11A1,1 0 0,0 19,10C18.72,10 18.47,10.11 18.29,10.29C17.9,10.68 17.27,10.68 16.88,10.29C16.5,9.9 16.5,9.27 16.88,8.88C17.42,8.34 18.17,8 19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14H5A1,1 0 0,1 4,13A1,1 0 0,1 5,12H19M18,18H4A1,1 0 0,1 3,17A1,1 0 0,1 4,16H18A3,3 0 0,1 21,19A3,3 0 0,1 18,22C17.17,22 16.42,21.66 15.88,21.12C15.5,20.73 15.5,20.1 15.88,19.71C16.27,19.32 16.9,19.32 17.29,19.71C17.47,19.89 17.72,20 18,20A1,1 0 0,0 19,19A1,1 0 0,0 18,18Z'/%3E%3C/svg%3E");
 }
 
+.stat-label {
+    min-width: 110px !important;  /* Fixed width for all labels */
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
 
+.stat-value {
+    min-width: 35px !important;   /* Fixed width for values */
+    text-align: right !important;
+    padding-left: 8px !important;
+}
+
+.stat-label[data-stat="total"]::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234caf50'%3E%3Cpath d='M19 3H5C3.9 3 3 3.9 3 5V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3M13 7H17V9H13V7M13 11H17V13H13V11M13 15H17V17H13V15M7 7H11V9H7V7M7 11H11V13H7V11M7 15H11V17H7V15Z'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] .stat-item.total {
+    border-top: 2px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+@media (max-width: 480px) {
+    /* Make stat items full width */
+    .stat-item {
+        width: 100% !important;
+        padding: 8px 12px !important;  /* Slightly reduced padding */
+    }
+
+    /* Adjust label width */
+    .stat-label {
+        min-width: 90px !important;  /* Smaller minimum width */
+        font-size: 0.85rem !important;  /* Slightly smaller font */
+    }
+
+    /* Adjust stat bar */
+    .stat-bar-bg {
+        min-width: 120px !important;  /* Smaller minimum width */
+        max-width: 100% !important;
+    }
+
+    /* Adjust stat value */
+    .stat-value {
+        min-width: 30px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Adjust total stat for mobile */
+    .stat-item.total {
+        padding: 12px 12px 8px !important;
+    }
+}
+
+/* Add animation keyframes */
+@keyframes statBarFill {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Update the stat bar fill class */
+.stat-bar-fill {
+    height: 100% !important;
+    border-radius: 6px !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    z-index: 1 !important;
+    animation: statBarFill 0.6s ease forwards;
+}
+
+/* Add staggered delay for each stat */
+#hp-stat .stat-bar-fill { animation-delay: 0s; }
+#attack-stat .stat-bar-fill { animation-delay: 0s; }
+#defense-stat .stat-bar-fill { animation-delay: 0s; }
+#sp-attack-stat .stat-bar-fill { animation-delay: 0s; }
+#sp-defense-stat .stat-bar-fill { animation-delay: 0s; }
+#speed-stat .stat-bar-fill { animation-delay: 0s; }
+#bst-stat .stat-bar-fill { animation-delay: 0s; }
+
+/* Add specific styling for type chips in the stats header */
+.stats-header .type-chip {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    height: 22px;
+    min-width: unset;
+    max-width: fit-content;
+    display: flex;
+    align-items: center;  /* Ensure vertical centering */
+}
+
+.stats-header .type-chip .type-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;  /* Consistent spacing */
+    display: flex;      /* Help with alignment */
+}
+
+.stats-header .type-chip span {
+    padding: 0;                 /* Remove extra padding */
+}
+
+.name-and-types {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stats-header .pokemon-types {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* Adjust spacing between Base Stats and name line */
+.stats-title {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Make sure the name is centered */
+#stats-pokemon-name {
+    text-align: left;
+}
 

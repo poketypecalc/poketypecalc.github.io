@@ -1083,6 +1083,24 @@ function displayPokemonStats(pokemon) {
     spriteElement.src = `images/sprites/front/${spriteNumber}.png`;
     spriteElement.alt = pokemon.POKEMON;
     
+    // Add this section to handle types
+    const typesContainer = document.getElementById('stats-pokemon-types');
+    typesContainer.innerHTML = ''; // Clear existing types
+    
+    // Add type badges using the same format as your existing type chips
+    pokemon.types.forEach(type => {
+        const typeSpan = document.createElement('span');
+        typeSpan.className = `type-chip`;
+        typeSpan.style.backgroundColor = typeColors[type];
+        typeSpan.innerHTML = `
+            <img src="images/${type.toLowerCase()}_icon.png" 
+                 alt="${type} type" 
+                 class="type-icon">
+            <span>${type}</span>
+        `;
+        typesContainer.appendChild(typeSpan);
+    });
+    
     // Update each stat with value and progress bar
     updateStatBar('hp-stat', pokemon.HP, 'HP');
     updateStatBar('attack-stat', pokemon.ATK, 'ATK');
