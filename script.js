@@ -1046,7 +1046,7 @@ function getStatColor(percentage) {
     } else if (percentage <= 50) {
         return '#ff9933';  // Orange (26-50%)
     } else if (percentage <= 75) {
-        return '#ffd700';  // Yellow (51-75%)
+        return '#d3fc03';  // Yellow-Green (51-75%)
     } else {
         return '#4caf50';  // Green (76-100%)
     }
